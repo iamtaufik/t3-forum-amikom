@@ -90,7 +90,7 @@ model Posts {
   body        String
   image       String?
   student_id  Int
-  student     User @relation(fields: [student_id], references: [id])
+  student     User @relation(fields: [student_id], references: [id], onDelete: Cascade)
   comments    Comments[]
   category    Category @default(AMIKOM)
   createdAt   DateTime @default(now())
@@ -104,6 +104,6 @@ model Comments {
   student_id  Int       
   student     User @relation(fields: [student_id], references: [id])
   post_id     Int
-  post        Posts    @relation(fields: [post_id], references: [id])
+  post        Posts    @relation(fields: [post_id], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
 }

@@ -64,6 +64,32 @@ export const postRouter = createTRPCRouter({
       include: { student: true },
     });
   }),
+
+  delete: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.db.posts.findUnique({
+        where: { id: input.id },
+        include: { student: true },
+      });
+
+      if (!post) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
+      }
+
+      if (post.student.email !== ctx.session.user.email) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not allowed to delete this post",
+        });
+      }
+
+      return ctx.db.posts.delete({ where: { id: input.id } });
+    }),
 });
 
 // getLatest: protectedProcedure.query(({ ctx }) => {
