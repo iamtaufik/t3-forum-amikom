@@ -38,6 +38,9 @@ const AddPost = ({ user }: { user: User }) => {
     onSuccess: () => {
       router.push("/");
     },
+    onError: (err) => {
+      console.log(err);
+    },
   });
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {

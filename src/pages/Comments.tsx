@@ -12,11 +12,9 @@ interface IProps {
 }
 
 const Comments = ({ postId, email }: IProps) => {
-  const { data, isLoading, isError, refetch, error } =
-    api.comment.getAll.useQuery({
-      postId: Number(postId),
-    });
-  console.log(error);
+  const { data, isLoading, isError, refetch } = api.comment.getAll.useQuery({
+    postId: Number(postId),
+  });
   return (
     <>
       <div className="container relative flex min-h-screen max-w-lg flex-col items-center bg-gray px-4 pb-6 ">
@@ -73,6 +71,7 @@ const Comments = ({ postId, email }: IProps) => {
           )}
           {data?.map((comment) => (
             <div
+              key={comment.id}
               className={`flex  w-full ${
                 comment.student.email === email
                   ? "justify-end"

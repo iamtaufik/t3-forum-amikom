@@ -1,6 +1,10 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "@/server/api/trpc";
 import bcrypt from "bcrypt";
 
 export const userRouter = createTRPCRouter({
@@ -17,6 +21,26 @@ export const userRouter = createTRPCRouter({
         data: {
           ...input,
           password: await bcrypt.hash(input.password, 10),
+        },
+      });
+
+      return user;
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.update({
+        where: {
+          email: ctx.session.user.email!,
+        },
+        data: {
+          name: input.name,
+          email: input.email,
         },
       });
 
