@@ -30,7 +30,6 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        email: z.string().email(),
         nim: z.string(),
       }),
     )
@@ -50,7 +49,6 @@ export const userRouter = createTRPCRouter({
         where: { id: Number(ctx.session.user.id) },
         data: {
           name: input.name,
-          email: input.email,
           profile: {
             connect: {
               id: profile.id,

@@ -6,7 +6,7 @@ import { useState } from "react";
 const EditProfile = ({ userInfo }: { userInfo: User }) => {
   const [name, setName] = useState(userInfo?.name ?? "");
   const [nim, setNim] = useState(userInfo?.profile?.nim ?? "");
-  const [email, setEmail] = useState(userInfo?.email ?? "");
+
   const [password, setPassword] = useState("");
 
   const user = api.user.update.useMutation({
@@ -19,7 +19,7 @@ const EditProfile = ({ userInfo }: { userInfo: User }) => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        user.mutate({ name, email, nim });
+        user.mutate({ name, nim });
       }}
       action=""
       className="my-4  flex flex-col gap-4"
@@ -53,20 +53,18 @@ const EditProfile = ({ userInfo }: { userInfo: User }) => {
       <div className="flex w-full flex-col gap-2 py-1">
         <label htmlFor="email">Email</label>
         <input
-          className="w-full border-primary bg-gray px-4 py-2  font-normal text-black shadow-md focus:border-b-2 focus:bg-white focus:outline-none"
+          className="w-full border-primary bg-gray px-4 py-2 font-normal  text-black shadow-md focus:border-b-2 focus:bg-white focus:outline-none disabled:text-zinc-500"
           type="email"
           name="email"
           id="email"
-          placeholder={email}
-          disabled={user.isLoading}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          disabled
+          value={userInfo?.email ?? ""}
         />
       </div>
       <div className="flex w-full flex-col gap-2 py-1">
         <label htmlFor="password">Password</label>
         <input
-          className="w-full border-primary bg-gray px-4 py-2  font-normal text-black shadow-md focus:border-b-2 focus:bg-white focus:outline-none"
+          className="w-full border-primary bg-gray px-4 py-2 font-normal  text-black shadow-md focus:border-b-2 focus:bg-white focus:outline-none "
           type="password"
           name="password"
           id="password"
