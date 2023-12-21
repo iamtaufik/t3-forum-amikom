@@ -1,4 +1,3 @@
-import Navbar from "@/components/Navbar";
 import NavbarBtm from "@/components/NavbarBtm";
 import PostsList from "@/components/PostsList";
 import { getServerAuthSession } from "@/server/auth";
@@ -11,7 +10,6 @@ const Home = async () => {
 
   return (
     <div className="container min-h-screen max-w-lg bg-gray px-4 pb-6 ">
-      <Navbar />
       <PostsList />
       <NavbarBtm />
     </div>

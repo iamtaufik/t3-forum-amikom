@@ -6,17 +6,25 @@ import { api } from "@/trpc/react";
 import Label from "./Label";
 import Post from "./Post";
 import { SessionProvider } from "next-auth/react";
+import { useDebounce } from "use-debounce";
+import Navbar from "./Navbar";
 
 const Categories = ["Terbaru", "UKM", "AMIKOM", "Berita", "Saran"] as const;
 
 const PostsList = () => {
   const [isActive, setIsActive] =
     useState<(typeof Categories)[number]>("Terbaru");
-  const { isLoading, data, isError, refetch } = api.post.getAll.useQuery();
+  const [search, setSearch] = useState("");
+
+  const [debouncedSearch] = useDebounce(search, 1000);
+  const { isLoading, data, isError, refetch } = api.post.getAll.useQuery({
+    query: debouncedSearch,
+  });
 
   return (
     <>
       <SessionProvider>
+        <Navbar search={search} setSearch={setSearch} />
         <div className="flex justify-between gap-x-2 overflow-x-auto py-2">
           {Categories.map((category) => (
             <Label
@@ -61,6 +69,11 @@ const PostsList = () => {
                   author={post.student.email}
                 />
               ))}
+          {data?.length === 0 && (
+            <div className="text-muted-foreground text-center">
+              Post tidak ditemukan
+            </div>
+          )}
 
           {isActive === "Terbaru" &&
             data?.map((post) => (

@@ -36,12 +36,30 @@ export const postRouter = createTRPCRouter({
       });
     }),
 
-  getAll: protectedProcedure.query(({ ctx }) => {
-    return ctx.db.posts.findMany({
-      orderBy: { createdAt: "desc" },
-      include: { student: true },
-    });
-  }),
+  getAll: protectedProcedure
+    .input(
+      z.object({
+        query: z.string().optional(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      if (input.query !== "") {
+        return ctx.db.posts.findMany({
+          where: {
+            OR: [
+              { body: { contains: input.query } },
+              { student: { name: { contains: input.query } } },
+            ],
+          },
+          orderBy: { createdAt: "desc" },
+          include: { student: true },
+        });
+      }
+      return ctx.db.posts.findMany({
+        orderBy: { createdAt: "desc" },
+        include: { student: true },
+      });
+    }),
 
   getOne: protectedProcedure
     .input(z.object({ id: z.number() }))
@@ -89,5 +107,21 @@ export const postRouter = createTRPCRouter({
       }
 
       return ctx.db.posts.delete({ where: { id: input.id } });
+    }),
+
+  search: protectedProcedure
+    .input(
+      z.object({
+        query: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.posts.findMany({
+        where: {
+          OR: [{ body: { contains: input.query } }],
+        },
+        orderBy: { createdAt: "desc" },
+        include: { student: true },
+      });
     }),
 });
