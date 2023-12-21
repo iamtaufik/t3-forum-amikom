@@ -15,6 +15,7 @@ const Page = async () => {
       </div>
     );
   }
+  console.log({ ...session.user });
   return (
     <div className="container h-screen max-w-lg bg-white pb-6">
       <div className="my-2 flex w-full justify-start px-4">

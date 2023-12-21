@@ -41,11 +41,15 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => {
+    session: async ({ session, user }) => {
+      const userDetails = await db.user.findFirst({
+        where: { email: user.email },
+        include: { profile: true },
+      });
       return {
         ...session,
         user: {
-          ...user,
+          ...userDetails,
         },
       };
     },

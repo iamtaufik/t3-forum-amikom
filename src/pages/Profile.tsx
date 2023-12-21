@@ -50,6 +50,7 @@ const Profile = ({ user }: { user: User }) => {
           <div className="flex items-center gap-4 rounded-md bg-white p-4 shadow-md">
             <div>
               <h2>{user?.name}</h2>
+              <h2>{user?.profile?.nim}</h2>
               {/* <p>{session?.user?.name?.split(' ')[session?.user?.name?.split(' ').length - 1]}</p> */}
             </div>
             <div>

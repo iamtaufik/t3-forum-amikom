@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const EditProfile = ({ userInfo }: { userInfo: User }) => {
   const [name, setName] = useState(userInfo?.name ?? "");
-  const [nim, setNim] = useState("");
+  const [nim, setNim] = useState(userInfo?.profile?.nim ?? "");
   const [email, setEmail] = useState(userInfo?.email ?? "");
   const [password, setPassword] = useState("");
 
@@ -19,7 +19,7 @@ const EditProfile = ({ userInfo }: { userInfo: User }) => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        user.mutate({ name, email });
+        user.mutate({ name, email, nim });
       }}
       action=""
       className="my-4  flex flex-col gap-4"

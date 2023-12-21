@@ -31,16 +31,31 @@ export const userRouter = createTRPCRouter({
       z.object({
         name: z.string(),
         email: z.string().email(),
+        nim: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.update({
-        where: {
-          email: ctx.session.user.email!,
+      const profile = await ctx.db.profiles.upsert({
+        where: { student_id: Number(ctx.session.user.id) },
+        create: {
+          student_id: Number(ctx.session.user.id),
+          nim: input.nim,
         },
+        update: {
+          nim: input.nim,
+        },
+      });
+
+      const user = await ctx.db.user.update({
+        where: { id: Number(ctx.session.user.id) },
         data: {
           name: input.name,
           email: input.email,
+          profile: {
+            connect: {
+              id: profile.id,
+            },
+          },
         },
       });
 
