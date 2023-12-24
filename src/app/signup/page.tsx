@@ -1,5 +1,5 @@
-import Signup from '@/pages/Signup';
-import React from 'react';
+import Signup from "@/layouts/Signup";
+import React from "react";
 
 const Page = () => {
   return <Signup />;

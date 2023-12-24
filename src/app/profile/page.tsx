@@ -1,6 +1,6 @@
 import LoginBtn from "@/components/LoginBtn";
 import NavbarBtm from "@/components/NavbarBtm";
-import Profile from "@/pages/Profile";
+import Profile from "@/layouts/Profile";
 import { getServerAuthSession } from "@/server/auth";
 import React from "react";
 

@@ -1,5 +1,5 @@
 import LoginBtn from "@/components/LoginBtn";
-import Comments from "@/pages/Comments";
+import Comments from "@/layouts/Comments";
 import { getServerAuthSession } from "@/server/auth";
 import React from "react";
 
