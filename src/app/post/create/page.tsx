@@ -1,5 +1,5 @@
 import LoginBtn from "@/components/LoginBtn";
-import AddPost from "@/layouts/AddPost";
+import AddPost from "@/components/layouts/AddPost";
 import { getServerAuthSession } from "@/server/auth";
 import React from "react";
 
