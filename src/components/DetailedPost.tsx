@@ -15,6 +15,7 @@ const DetailedPost = ({ postId }: { postId: string }) => {
           <Loading />
         ) : (
           <Post
+            userId={post?.student?.id ?? 0}
             name={post?.student?.name ?? ""}
             description={post?.body ?? ""}
             id={post?.id ?? 0}
