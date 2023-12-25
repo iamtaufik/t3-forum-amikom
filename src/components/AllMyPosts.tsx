@@ -37,6 +37,7 @@ const AllMyPosts = () => {
               profilePicture={post.student.image ?? "/blank-profile.png"}
               imagePost={post.image ?? ""}
               author={post.student.email}
+              userId={post.student.id}
             />
           ))}
         </div>

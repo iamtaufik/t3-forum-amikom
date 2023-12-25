@@ -8,6 +8,7 @@ interface IProps {
   id: number;
   name: string;
   author: string;
+  userId: number;
   profilePicture: string;
   imagePost?: string;
   description: string;
@@ -22,6 +23,7 @@ const Post = ({
   profilePicture,
   imagePost,
   description,
+  userId,
   className,
   isBtnComment = true,
 }: IProps) => {
@@ -47,7 +49,13 @@ const Post = ({
             src={profilePicture}
             alt={name}
           />
-          <h2 className="text-sm font-semibold text-dark">{name}</h2>
+          <h2 className="text-sm font-semibold text-dark">
+            {Number(userId) === Number(session?.user.id) ? (
+              name
+            ) : (
+              <Link href={`/profile/${userId}`}>{name}</Link>
+            )}
+          </h2>
         </div>
         <div className="relative flex flex-col items-end justify-end">
           <div onClick={() => setIsActive(!isActive)}>

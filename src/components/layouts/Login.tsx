@@ -82,7 +82,7 @@ const Login = () => {
       <p className="my-4 gap-4 text-center">Atau</p>
       <div className="flex justify-center text-sm">
         <button
-          className="flex w-max rounded-3xl bg-white px-4 py-2 font-semibold text-primary shadow-md"
+          className="flex w-max  items-center  rounded-3xl bg-white px-4 py-2 font-semibold text-primary shadow-md"
           onClick={() => signIn("google", { callbackUrl: "/" })}
         >
           <svg
