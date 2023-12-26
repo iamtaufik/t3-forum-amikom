@@ -6,6 +6,69 @@ import imagekit from "@/libs/imagekit";
 import { TRPCError } from "@trpc/server";
 
 export const postRouter = createTRPCRouter({
+  infiniteFeed: protectedProcedure
+    .input(
+      z.object({
+        query: z.string().optional(),
+        limit: z.number().optional(),
+        cursor: z
+          .object({
+            id: z.number(),
+            createdAt: z.date(),
+          })
+          .optional(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { limit = 10, cursor } = input;
+      if (input.query !== "") {
+        const posts = await ctx.db.posts.findMany({
+          where: {
+            OR: [
+              { body: { contains: input.query } },
+              { student: { name: { contains: input.query } } },
+            ],
+          },
+          take: limit + 1,
+          cursor: cursor ? { createdAt_id: cursor } : undefined,
+          orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+          include: { student: true },
+        });
+        let nextCursor: typeof cursor | undefined;
+
+        if (posts.length > limit) {
+          const nextItem = posts.pop();
+          if (nextItem != null) {
+            nextCursor = {
+              id: nextItem.id,
+              createdAt: nextItem.createdAt,
+            };
+          }
+        }
+
+        return { posts, nextCursor };
+      }
+
+      const posts = await ctx.db.posts.findMany({
+        take: limit + 1,
+        cursor: cursor ? { createdAt_id: cursor } : undefined,
+        orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+        include: { student: true },
+      });
+      let nextCursor: typeof cursor | undefined;
+
+      if (posts.length > limit) {
+        const nextItem = posts.pop();
+        if (nextItem != null) {
+          nextCursor = {
+            id: nextItem.id,
+            createdAt: nextItem.createdAt,
+          };
+        }
+      }
+
+      return { posts, nextCursor };
+    }),
   create: protectedProcedure
     .input(
       z.object({
@@ -33,31 +96,6 @@ export const postRouter = createTRPCRouter({
           image,
           student: { connect: { email: ctx.session.user.email! } },
         },
-      });
-    }),
-
-  getAll: protectedProcedure
-    .input(
-      z.object({
-        query: z.string().optional(),
-      }),
-    )
-    .query(({ ctx, input }) => {
-      if (input.query !== "") {
-        return ctx.db.posts.findMany({
-          where: {
-            OR: [
-              { body: { contains: input.query } },
-              { student: { name: { contains: input.query } } },
-            ],
-          },
-          orderBy: { createdAt: "desc" },
-          include: { student: true },
-        });
-      }
-      return ctx.db.posts.findMany({
-        orderBy: { createdAt: "desc" },
-        include: { student: true },
       });
     }),
 

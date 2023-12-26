@@ -8,6 +8,8 @@ import Post from "./Post";
 import { SessionProvider } from "next-auth/react";
 import { useDebounce } from "use-debounce";
 import Navbar from "./Navbar";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { type $Enums } from "@prisma/client";
 
 const Categories = ["Terbaru", "UKM", "AMIKOM", "Berita", "Saran"] as const;
 
@@ -17,9 +19,15 @@ const PostsList = () => {
   const [search, setSearch] = useState("");
 
   const [debouncedSearch] = useDebounce(search, 1000);
-  const { isLoading, data, isError, refetch } = api.post.getAll.useQuery({
-    query: debouncedSearch,
-  });
+
+  const post = api.post.infiniteFeed.useInfiniteQuery(
+    {
+      query: debouncedSearch,
+    },
+    {
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
 
   return (
     <>
@@ -40,13 +48,13 @@ const PostsList = () => {
           ))}
         </div>
         <div className="mb-12 mt-4 flex flex-col gap-4">
-          {isError && (
+          {post.isError && (
             <Error
               title="Gagal memuat data"
               description="Terjadi kesalahan saat memuat data"
               action={
                 <button
-                  onClick={() => refetch()}
+                  onClick={() => post.refetch()}
                   className="rounded-md bg-primary px-4 py-2 text-white"
                 >
                   Coba lagi
@@ -54,43 +62,24 @@ const PostsList = () => {
               }
             />
           )}
-          {isLoading && <Loading />}
-          {isActive !== "Terbaru" &&
-            data
-              ?.filter((post) => post.category === isActive)
-              .map((post) => (
-                <Post
-                  key={post.id}
-                  name={post.student.name}
-                  description={post.body}
-                  id={post.id}
-                  profilePicture={post.student.image ?? "/blank-profile.png"}
-                  imagePost={post.image ?? ""}
-                  author={post.student.email}
-                  userId={post.student.id}
-                  createdAt={post.createdAt}
-                />
-              ))}
-          {data?.length === 0 && (
+
+          {post.data?.pages.flatMap((page) => page.posts).length === 0 && (
             <div className="text-muted-foreground text-center">
               Post tidak ditemukan
             </div>
           )}
 
-          {isActive === "Terbaru" &&
-            data?.map((post) => (
-              <Post
-                key={post.id}
-                name={post.student.name}
-                description={post.body}
-                id={post.id}
-                profilePicture={post.student.image ?? "/blank-profile.png"}
-                imagePost={post.image ?? ""}
-                author={post.student.email}
-                userId={post.student.id}
-                createdAt={post.createdAt}
-              />
-            ))}
+          <InfiniteFeedList
+            posts={
+              isActive === "Terbaru"
+                ? post.data?.pages.flatMap((page) => page.posts)
+                : post.data?.pages.flatMap((page) =>
+                    page.posts.filter((post) => post.category === isActive),
+                  )
+            }
+            hasMore={post.hasNextPage ?? false}
+            fetchNewPosts={post.fetchNextPage}
+          />
         </div>
       </SessionProvider>
     </>
@@ -98,3 +87,63 @@ const PostsList = () => {
 };
 
 export default PostsList;
+
+type Post = {
+  id: number;
+  body: string;
+  image: string | null;
+  student_id: number;
+  category: $Enums.Category;
+  createdAt: Date;
+  updatedAt: Date;
+  student: {
+    id: number;
+    name: string;
+    email: string;
+    password: string | null;
+    googleId: string | null;
+    image: string | null;
+    emailVerified: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+};
+
+const InfiniteFeedList = ({
+  posts,
+  hasMore,
+  fetchNewPosts,
+}: {
+  posts?: Post[];
+  hasMore: boolean;
+  fetchNewPosts: () => void;
+}) => {
+  return (
+    <>
+      <SessionProvider>
+        {/* <Navbar  /> */}
+        <InfiniteScroll
+          dataLength={posts?.length ?? 0}
+          next={fetchNewPosts}
+          hasMore={hasMore}
+          loader={<Loading />}
+          className="flex flex-col gap-4"
+        >
+          {posts?.map((post) => (
+            <Post
+              key={post.id}
+              name={post.student.name}
+              description={post.body}
+              id={post.id}
+              profilePicture={post.student.image ?? "/blank-profile.png"}
+              imagePost={post.image ?? ""}
+              author={post.student.email}
+              userId={post.student.id}
+              createdAt={post.createdAt}
+            />
+          ))}
+        </InfiniteScroll>
+      </SessionProvider>
+    </>
+  );
+};

@@ -95,6 +95,8 @@ model Posts {
   category    Category @default(AMIKOM)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@unique([createdAt, id])
 }
 
 
