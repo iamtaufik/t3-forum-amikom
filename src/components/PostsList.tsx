@@ -68,6 +68,7 @@ const PostsList = () => {
                   imagePost={post.image ?? ""}
                   author={post.student.email}
                   userId={post.student.id}
+                  createdAt={post.createdAt}
                 />
               ))}
           {data?.length === 0 && (
@@ -87,6 +88,7 @@ const PostsList = () => {
                 imagePost={post.image ?? ""}
                 author={post.student.email}
                 userId={post.student.id}
+                createdAt={post.createdAt}
               />
             ))}
         </div>

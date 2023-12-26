@@ -84,6 +84,7 @@ const Comments = ({ postId, email }: IProps) => {
                 profilePicture={comment.student.image ?? "/blank-profile.png"}
                 content={comment.body}
                 order={comment.student.email !== email ? "left" : "right"}
+                createdAt={comment.createdAt}
               />
             </div>
           ))}

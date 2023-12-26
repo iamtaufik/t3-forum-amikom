@@ -1,3 +1,4 @@
+import { dateFormater } from "@/libs/dateFormater";
 import { api } from "@/trpc/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -14,6 +15,7 @@ interface IProps {
   description: string;
   isBtnComment?: boolean;
   className?: string;
+  createdAt: Date;
 }
 
 const Post = ({
@@ -26,6 +28,7 @@ const Post = ({
   userId,
   className,
   isBtnComment = true,
+  createdAt,
 }: IProps) => {
   const [isActive, setIsActive] = useState<boolean>(false);
   const { data: session } = useSession();
@@ -49,13 +52,18 @@ const Post = ({
             src={profilePicture}
             alt={name}
           />
-          <h2 className="text-sm font-semibold text-dark">
-            {Number(userId) === Number(session?.user.id) ? (
-              name
-            ) : (
-              <Link href={`/profile/${userId}`}>{name}</Link>
-            )}
-          </h2>
+          <div>
+            <h2 className="text-sm font-semibold text-dark">
+              {Number(userId) === Number(session?.user.id) ? (
+                name
+              ) : (
+                <Link href={`/profile/${userId}`}>{name}</Link>
+              )}
+            </h2>
+            <p className="text-xs">
+              {dateFormater.format(new Date(Date.parse(String(createdAt))))}
+            </p>
+          </div>
         </div>
         <div className="relative flex flex-col items-end justify-end">
           <div onClick={() => setIsActive(!isActive)}>

@@ -1,3 +1,4 @@
+import { dateFormater } from "@/libs/dateFormater";
 import Image from "next/image";
 import React from "react";
 
@@ -7,9 +8,16 @@ interface IProps {
   profilePicture?: string;
   content: string;
   order?: "left" | "right";
+  createdAt: Date;
 }
 
-const Comment = ({ name, profilePicture, content, order }: IProps) => {
+const Comment = ({
+  name,
+  profilePicture,
+  content,
+  order,
+  createdAt,
+}: IProps) => {
   return (
     <div className="flex gap-4 bg-transparent px-2">
       <div
@@ -33,6 +41,11 @@ const Comment = ({ name, profilePicture, content, order }: IProps) => {
             {content}
           </p>
         </div>
+        <p
+          className={`text-xs ${order === "left" ? "text-start " : "text-end"}`}
+        >
+          {dateFormater.format(new Date(Date.parse(String(createdAt))))}
+        </p>
       </div>
       <div className={`${order === "left" ? "order-1" : "order-2"}`}>
         <Image

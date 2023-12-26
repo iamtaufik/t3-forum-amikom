@@ -24,6 +24,7 @@ const DetailedPost = ({ postId }: { postId: string }) => {
             isBtnComment={false}
             className="w-full"
             author={post?.student.email ?? ""}
+            createdAt={post?.createdAt ?? new Date()}
           />
         )}
       </div>
