@@ -1,5 +1,6 @@
 "use client";
 import NavbarBtm from "@/components/NavbarBtm";
+import { dateFormater } from "@/libs/dateFormater";
 import { api } from "@/trpc/react";
 import { User, type Posts, Profiles } from "@prisma/client";
 import Image from "next/image";
@@ -67,6 +68,7 @@ const Page = ({ params }: { params: { userId: number } }) => {
                   profilePicture={user.image ?? "/blank-profile.png"}
                   imagePost={post.image ?? ""}
                   userId={user.id}
+                  createdAt={post.createdAt}
                 />
               ))}
             </div>
@@ -79,6 +81,7 @@ const Page = ({ params }: { params: { userId: number } }) => {
                   id={comment.id}
                   name={user.name}
                   profilePicture={user.image ?? "/blank-profile.png"}
+                  createdAt={comment.createdAt}
                 />
               ))}
             </div>
@@ -100,6 +103,7 @@ const Post = ({
   description,
   userId,
   className,
+  createdAt,
   isBtnComment = true,
 }: {
   id: number;
@@ -109,6 +113,7 @@ const Post = ({
   imagePost?: string;
   description: string;
   isBtnComment?: boolean;
+  createdAt: Date;
   className?: string;
 }) => {
   return (
@@ -128,6 +133,9 @@ const Post = ({
             <h2 className="text-sm font-semibold text-dark">
               <Link href={`/profile/${userId}`}>{name}</Link>
             </h2>
+            <p className="text-xs">
+              {dateFormater.format(new Date(Date.parse(String(createdAt))))}
+            </p>
           </div>
         </div>
         {imagePost && (
@@ -178,11 +186,13 @@ const Comment = ({
   profilePicture,
   content,
   order,
+  createdAt,
 }: {
   id: number;
   name: string;
   profilePicture?: string;
   content: string;
+  createdAt: Date;
   order?: "left" | "right";
 }) => {
   return (
@@ -208,6 +218,11 @@ const Comment = ({
             {content}
           </p>
         </div>
+        <p
+          className={`text-xs ${order === "left" ? "text-start " : "text-end"}`}
+        >
+          {dateFormater.format(new Date(Date.parse(String(createdAt))))}
+        </p>
       </div>
       <div className={`${order === "left" ? "order-1" : "order-2"}`}>
         <Image

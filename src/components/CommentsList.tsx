@@ -20,6 +20,7 @@ const CommentsList = () => {
             id={comment.id}
             profilePicture={comment.student.image ?? "/blank-profile.png"}
             content={comment.body}
+            createdAt={comment.createdAt}
           />
         ))}
       </div>

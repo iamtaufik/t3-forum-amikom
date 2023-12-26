@@ -38,6 +38,7 @@ const AllMyPosts = () => {
               imagePost={post.image ?? ""}
               author={post.student.email}
               userId={post.student.id}
+              createdAt={post.createdAt}
             />
           ))}
         </div>
