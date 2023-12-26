@@ -69,6 +69,8 @@ const PostsList = () => {
             </div>
           )}
 
+          {post.isLoading && <Loading />}
+
           <InfiniteFeedList
             posts={
               isActive === "Terbaru"
