@@ -15,7 +15,6 @@ const Page = async () => {
       </div>
     );
   }
-  console.log({ ...session.user });
   return (
     <div className="container h-screen max-w-lg bg-white pb-6">
       <div className="my-2 flex w-full justify-start px-4">
@@ -40,16 +39,7 @@ const Page = async () => {
       </div>
       <div className="container px-8">
         <h1 className="text-2xl font-semibold text-primary">Edit Profile</h1>
-        <div className="flex flex-col items-center justify-center gap-3">
-          <Image
-            className="rounded-full"
-            src={session.user.image ?? ""}
-            width={120}
-            height={120}
-            alt={session.user.name ?? ""}
-          />
-          <p className="font-medium text-primary">Edit Foto Profile</p>
-        </div>
+
         <div>
           <EditProfile userInfo={session.user} />
         </div>

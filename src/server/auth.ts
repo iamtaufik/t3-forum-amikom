@@ -83,7 +83,6 @@ export const authOptions: NextAuthOptions = {
         );
         if (!isMatch) throw new Error("Invalid password");
 
-        console.log(student);
         return {
           ...student,
           id: student.id.toString(),

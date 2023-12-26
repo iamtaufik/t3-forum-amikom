@@ -6,6 +6,8 @@ import {
   publicProcedure,
 } from "@/server/api/trpc";
 import bcrypt from "bcrypt";
+import imagekit from "@/libs/imagekit";
+import { TRPCError } from "@trpc/server";
 
 export const userRouter = createTRPCRouter({
   register: publicProcedure
@@ -31,13 +33,36 @@ export const userRouter = createTRPCRouter({
       z.object({
         name: z.string(),
         nim: z.string(),
+        imageBase64: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      let image = null;
+
+      if (input.imageBase64) {
+        const { url } = await imagekit.upload({
+          file: input.imageBase64,
+          fileName: Date.now().toString(),
+          folder: "/forum-amikom/posts",
+        });
+        image = url;
+      }
+
+      const isExistUser = await ctx.db.user.findUnique({
+        where: { id: Number(ctx.session.user.id) },
+      });
+
+      if (!isExistUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
       const profile = await ctx.db.profiles.upsert({
-        where: { student_id: Number(ctx.session.user.id) },
+        where: { student_id: isExistUser.id },
         create: {
-          student_id: Number(ctx.session.user.id),
+          student_id: isExistUser.id,
           nim: input.nim,
         },
         update: {
@@ -46,9 +71,10 @@ export const userRouter = createTRPCRouter({
       });
 
       const user = await ctx.db.user.update({
-        where: { id: Number(ctx.session.user.id) },
+        where: { id: isExistUser.id },
         data: {
           name: input.name,
+          image: image ?? isExistUser.image,
           profile: {
             connect: {
               id: profile.id,
