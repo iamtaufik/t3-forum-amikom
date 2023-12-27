@@ -89,7 +89,7 @@ const AddPost = ({ user }: { user: User }) => {
           </div>
         </Link>
         <div>
-          <span
+          <button
             className={`cursor-pointer rounded-2xl px-8 py-2 text-lg  ${
               content !== "" && isActive !== 0
                 ? "bg-primary text-white"
@@ -102,9 +102,10 @@ const AddPost = ({ user }: { user: User }) => {
                 category: Tags.find((tag) => tag.id === isActive)?.name ?? "",
               })
             }
+            disabled={post.isLoading}
           >
-            Post
-          </span>
+            {post.isLoading ? "Memposting..." : "Post"}
+          </button>
         </div>
       </div>
       <div className="mt-6 rounded-xl bg-white px-2 py-4">
